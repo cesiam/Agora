@@ -1,18 +1,13 @@
 import { Upload, Mic, BrainCircuit, FileCheck } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { colorClasses, type ColorKey } from "@/lib/colorClasses";
 
-const steps: { number: string; icon: LucideIcon; title: string; description: string; color: "primary" | "secondary" | "accent" }[] = [
+const steps: { number: string; icon: LucideIcon; title: string; description: string; color: ColorKey }[] = [
   { number: "01", icon: Upload, title: "Upload Your Materials", description: "Drop in your study materials — PDFs, lecture notes, slides, transcripts, or research papers. Our AI parses the content and identifies key concepts, definitions, and relationships.", color: "primary" },
   { number: "02", icon: Mic, title: "Start Your Session", description: "Begin a structured practice session. The platform guides you through phases — from recognition to retrieval to interpretation — adapting to your responses in real time.", color: "secondary" },
   { number: "03", icon: BrainCircuit, title: "AI Identifies Gaps", description: "As you explain, the model surfaces where reasoning is thin or vague — the kind of follow-up a strong oral exam would use, not just right or wrong.", color: "accent" },
   { number: "04", icon: FileCheck, title: "Get Actionable Feedback", description: "Receive structured feedback: strengths, specific areas to develop, and a recommended next step before your next session.", color: "primary" },
 ];
-
-const colorClasses = {
-  primary: { bg: "bg-primary", bgLight: "bg-primary/10", text: "text-primary", border: "border-primary/30" },
-  secondary: { bg: "bg-secondary", bgLight: "bg-secondary/10", text: "text-secondary", border: "border-secondary/30" },
-  accent: { bg: "bg-accent", bgLight: "bg-accent/10", text: "text-accent", border: "border-accent/30" },
-};
 
 export function HowItWorks() {
   return (
@@ -32,11 +27,11 @@ export function HowItWorks() {
         <div className="relative">
           <div className="hidden lg:block absolute top-24 left-[12%] right-[12%] h-0.5 bg-border" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {steps.map((step, index) => {
+            {steps.map((step) => {
               const colors = colorClasses[step.color];
               const Icon = step.icon;
               return (
-                <div key={index} className="relative text-center">
+                <div key={step.title} className="relative text-center">
                   <div className={`relative z-10 w-20 h-20 rounded-2xl ${colors.bg} flex items-center justify-center mx-auto mb-6 shadow-lg`}>
                     <Icon className="w-9 h-9 text-white" />
                     <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-card border-2 border-border flex items-center justify-center text-xs font-bold text-foreground">

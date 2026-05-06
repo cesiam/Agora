@@ -1,7 +1,8 @@
-import { Upload, Mic2, Lightbulb, Target, GraduationCap, ShieldCheck, BarChart3, Brain, MessageSquareText } from "lucide-react";
+import { Upload, Mic2, Target, GraduationCap, ShieldCheck, BarChart3, Brain, MessageSquareText } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { colorClasses, type ColorKey } from "@/lib/colorClasses";
 
-const features: { icon: LucideIcon; title: string; description: string; color: "primary" | "secondary" | "accent" }[] = [
+const features: { icon: LucideIcon; title: string; description: string; color: ColorKey }[] = [
   { icon: Brain, title: "Content Over Delivery", description: "We evaluate what you say, not how you say it. Logical coherence, reasoning quality, and claim-evidence relationships — the substance nobody else measures.", color: "primary" },
   { icon: Upload, title: "Upload Materials", description: "Drop in PDFs, lecture notes, slides, or research papers. Our AI parses and identifies key concepts, arguments, and relationships automatically.", color: "secondary" },
   { icon: Mic2, title: "Three-Phase Sessions", description: "Move through Recognition, Retrieval, and Interpretation — progressively deeper phases that separate memorization from genuine understanding.", color: "accent" },
@@ -11,12 +12,6 @@ const features: { icon: LucideIcon; title: string; description: string; color: "
   { icon: GraduationCap, title: "For All Learners", description: "From K-12 students to self-taught developers, graduate researchers to lifelong learners exploring quantum mechanics on their own.", color: "primary" },
   { icon: BarChart3, title: "Structured Debrief", description: "End each run with strength, area to develop, and a concrete next step — tied to what you actually said in the session.", color: "secondary" },
 ];
-
-const colorClasses = {
-  primary: { bg: "bg-primary/10", text: "text-primary", border: "group-hover:border-primary/50" },
-  secondary: { bg: "bg-secondary/10", text: "text-secondary", border: "group-hover:border-secondary/50" },
-  accent: { bg: "bg-accent/10", text: "text-accent", border: "group-hover:border-accent/50" },
-};
 
 export function Features() {
   return (
@@ -34,12 +29,12 @@ export function Features() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, index) => {
+          {features.map((feature) => {
             const colors = colorClasses[feature.color];
             const Icon = feature.icon;
             return (
-              <div key={index} className={`group p-6 rounded-2xl bg-card border border-border ${colors.border} transition-all duration-300 hover:shadow-lg`}>
-                <div className={`w-12 h-12 rounded-xl ${colors.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+              <div key={feature.title} className={`group p-6 rounded-2xl bg-card border border-border ${colors.cardBorder} transition-all duration-300 hover:shadow-lg`}>
+                <div className={`w-12 h-12 rounded-xl ${colors.bgLight} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                   <Icon className={`w-6 h-6 ${colors.text}`} />
                 </div>
                 <h3 className="font-semibold text-lg text-foreground mb-2">{feature.title}</h3>

@@ -1,5 +1,13 @@
 import { ArrowRight, Mic, Brain, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
+import type { LucideIcon } from "lucide-react";
+import { colorClasses, type ColorKey } from "@/lib/colorClasses";
+
+const highlights: { icon: LucideIcon; color: ColorKey; title: string; description: string }[] = [
+  { icon: Mic, color: "primary", title: "Oral Sessions", description: "Explain concepts in your own words" },
+  { icon: Brain, color: "secondary", title: "AI Analysis", description: "Identify gaps and misconceptions" },
+  { icon: MessageSquare, color: "accent", title: "Real Feedback", description: "Actionable insights for growth" },
+];
 
 export function Hero() {
   return (
@@ -15,9 +23,7 @@ export function Hero() {
         <div className="text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border mb-8">
             <span className="flex h-2 w-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-sm font-medium text-muted-foreground">
-              Understand Out Loud
-            </span>
+            <span className="text-sm font-medium text-muted-foreground">Understand Out Loud</span>
           </div>
 
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight mb-6">
@@ -52,29 +58,19 @@ export function Hero() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <div className="group p-4 rounded-2xl bg-card border border-border hover:border-primary/50 transition-colors">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform">
-                <Mic className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-1">Oral Sessions</h3>
-              <p className="text-sm text-muted-foreground">Explain concepts in your own words</p>
-            </div>
-
-            <div className="group p-4 rounded-2xl bg-card border border-border hover:border-secondary/50 transition-colors">
-              <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform">
-                <Brain className="w-6 h-6 text-secondary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-1">AI Analysis</h3>
-              <p className="text-sm text-muted-foreground">Identify gaps and misconceptions</p>
-            </div>
-
-            <div className="group p-4 rounded-2xl bg-card border border-border hover:border-accent/50 transition-colors">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform">
-                <MessageSquare className="w-6 h-6 text-accent" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-1">Real Feedback</h3>
-              <p className="text-sm text-muted-foreground">Actionable insights for growth</p>
-            </div>
+            {highlights.map((item) => {
+              const colors = colorClasses[item.color];
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className={`group p-4 rounded-2xl bg-card border border-border ${colors.cardBorder} transition-colors`}>
+                  <div className={`w-12 h-12 rounded-xl ${colors.bgLight} flex items-center justify-center mb-3 mx-auto group-hover:scale-110 transition-transform`}>
+                    <Icon className={`w-6 h-6 ${colors.text}`} />
+                  </div>
+                  <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

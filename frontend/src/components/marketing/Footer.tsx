@@ -71,7 +71,7 @@ export function Footer() {
         </div>
 
         <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">2026 Agora. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">© 2026 Agora. All rights reserved.</p>
           <p className="text-sm text-muted-foreground">Built for learners everywhere</p>
         </div>
       </div>

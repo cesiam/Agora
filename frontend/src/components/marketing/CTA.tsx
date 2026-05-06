@@ -18,7 +18,7 @@ export function CTA() {
               Ready to transform how you learn?
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-white/80 mb-10">
-              Join thousands of students and educators who are discovering the power of articulation. Start your first session in minutes.
+              Join thousands of students and educators who are discovering the power of explaining out loud. Start your first session in minutes.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link

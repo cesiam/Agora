@@ -1,10 +1,11 @@
 import { ClipboardCheck, BookOpen, Lightbulb, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
+import { colorClasses, type ColorKey } from "@/lib/colorClasses";
 
 const modes: {
   icon: LucideIcon; title: string; subtitle: string; description: string;
-  features: string[]; color: "primary" | "secondary" | "accent";
+  features: string[]; color: ColorKey;
   gradient: string; href: string | null; cta: string; popular?: boolean;
 }[] = [
   {
@@ -27,12 +28,6 @@ const modes: {
   },
 ];
 
-const colorClasses = {
-  primary: { bg: "bg-primary", bgLight: "bg-primary/10", text: "text-primary", border: "border-primary", hover: "hover:border-primary" },
-  secondary: { bg: "bg-secondary", bgLight: "bg-secondary/10", text: "text-secondary", border: "border-secondary", hover: "hover:border-secondary" },
-  accent: { bg: "bg-accent", bgLight: "bg-accent/10", text: "text-accent", border: "border-accent", hover: "hover:border-accent" },
-};
-
 export function Modes() {
   return (
     <section id="modes" className="py-24 bg-background">
@@ -49,11 +44,11 @@ export function Modes() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {modes.map((mode, index) => {
+          {modes.map((mode) => {
             const colors = colorClasses[mode.color];
             const Icon = mode.icon;
             return (
-              <div key={index} className={`relative group p-8 rounded-3xl bg-card border-2 border-border ${colors.hover} transition-all duration-300 hover:shadow-xl`}>
+              <div key={mode.title} className={`relative group p-8 rounded-3xl bg-card border-2 border-border ${colors.hover} transition-all duration-300 hover:shadow-xl`}>
                 {mode.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <span className={`px-4 py-1 rounded-full ${colors.bg} text-white text-xs font-semibold`}>Available now</span>
@@ -68,8 +63,8 @@ export function Modes() {
                   <h3 className="font-display text-2xl font-bold text-foreground mb-3">{mode.title}</h3>
                   <p className="text-muted-foreground leading-relaxed mb-6">{mode.description}</p>
                   <ul className="space-y-2 mb-8">
-                    {mode.features.map((feature, fi) => (
-                      <li key={fi} className="flex items-center gap-2 text-sm text-foreground">
+                    {mode.features.map((feature) => (
+                      <li key={feature} className="flex items-center gap-2 text-sm text-foreground">
                         <span className={`w-1.5 h-1.5 rounded-full ${colors.bg}`} />
                         {feature}
                       </li>

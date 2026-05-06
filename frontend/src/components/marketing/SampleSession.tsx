@@ -22,13 +22,14 @@ const rubricScores = [
   { criterion: "Application: solving problems using Vieta's without finding roots", predicted: 26, max: 30 },
 ];
 
-const totalPredicted = rubricScores.reduce((sum, s) => sum + s.predicted, 0);
-const totalMax = rubricScores.reduce((sum, s) => sum + s.max, 0);
+const TOTAL_PREDICTED = 91;
+const TOTAL_MAX = 100;
 
 export function SampleSession() {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+
+  const showResults = currentMessageIndex >= sessionMessages.length;
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -37,28 +38,22 @@ export function SampleSession() {
       return () => clearTimeout(timer);
     } else {
       setIsPlaying(false);
-      setShowResults(true);
     }
   }, [isPlaying, currentMessageIndex]);
 
   const handlePlay = () => {
-    if (currentMessageIndex >= sessionMessages.length) {
-      setCurrentMessageIndex(0);
-      setShowResults(false);
-    }
+    if (showResults) setCurrentMessageIndex(0);
     setIsPlaying(true);
   };
 
   const handleReset = () => {
     setIsPlaying(false);
     setCurrentMessageIndex(0);
-    setShowResults(false);
   };
 
   const handleSkipToEnd = () => {
     setIsPlaying(false);
     setCurrentMessageIndex(sessionMessages.length);
-    setShowResults(true);
   };
 
   const visibleMessages = sessionMessages.slice(0, currentMessageIndex);
@@ -172,21 +167,19 @@ export function SampleSession() {
                       <h3 className="font-display text-xl font-bold text-foreground">Session Results</h3>
                     </div>
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="text-5xl font-bold text-primary">{totalPredicted}</div>
-                      <div className="text-2xl text-muted-foreground">/ {totalMax}</div>
+                      <div className="text-5xl font-bold text-primary">{TOTAL_PREDICTED}</div>
+                      <div className="text-2xl text-muted-foreground">/ {TOTAL_MAX}</div>
                       <div className="ml-auto px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">Predicted Score</div>
                     </div>
                     <div className="space-y-3">
-                      {rubricScores.map((score, index) => (
-                        <div key={index} className="flex items-center gap-4">
-                          <div className="flex-1">
-                            <div className="flex justify-between text-sm mb-1">
-                              <span className="text-foreground">{score.criterion}</span>
-                              <span className="text-muted-foreground">{score.predicted}/{score.max}</span>
-                            </div>
-                            <div className="h-2 rounded-full bg-muted overflow-hidden">
-                              <div className="h-full rounded-full bg-primary transition-all duration-1000" style={{ width: `${(score.predicted / score.max) * 100}%` }} />
-                            </div>
+                      {rubricScores.map((score) => (
+                        <div key={score.criterion}>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-foreground">{score.criterion}</span>
+                            <span className="text-muted-foreground">{score.predicted}/{score.max}</span>
+                          </div>
+                          <div className="h-2 rounded-full bg-muted overflow-hidden">
+                            <div className="h-full rounded-full bg-primary transition-all duration-1000" style={{ width: `${(score.predicted / score.max) * 100}%` }} />
                           </div>
                         </div>
                       ))}
