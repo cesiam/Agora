@@ -100,25 +100,26 @@ export default function Start() {
         for (const part of parts) {
           const line = part.replace(/^data: /, "").trim();
           if (!line) continue;
+          let event: Record<string, unknown>;
           try {
-            const event = JSON.parse(line);
-            if (event.type === "progress") {
-              setProgressMsg(event.message);
-            } else if (event.type === "concept") {
-              setConcepts((prev) => [...prev, event.concept]);
-            } else if (event.type === "complete") {
-              setSessionData({
-                sessionId: event.sessionId,
-                courseId: event.courseId,
-                studentId: event.studentId,
-                title: event.title,
-              });
-              setPhase("ready");
-            } else if (event.type === "error") {
-              throw new Error(event.message);
-            }
+            event = JSON.parse(line);
           } catch {
-            // skip malformed lines
+            continue; // skip non-JSON lines
+          }
+          if (event.type === "progress") {
+            setProgressMsg(event.message as string);
+          } else if (event.type === "concept") {
+            setConcepts((prev) => [...prev, event.concept as Concept]);
+          } else if (event.type === "complete") {
+            setSessionData({
+              sessionId: event.sessionId as string,
+              courseId: event.courseId as string,
+              studentId: event.studentId as string,
+              title: event.title as string,
+            });
+            setPhase("ready");
+          } else if (event.type === "error") {
+            throw new Error(event.message as string);
           }
         }
       }

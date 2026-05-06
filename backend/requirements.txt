@@ -4,6 +4,7 @@ python-dotenv
 asyncpg
 pgvector
 sqlalchemy[asyncio]
+greenlet
 openai
 langchain
 langchain-openai

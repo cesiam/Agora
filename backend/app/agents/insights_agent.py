@@ -1,12 +1,9 @@
-import os
 import json
 import uuid
-from openai import AsyncOpenAI
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from app.models.insights import InsightsAgentResponse, Insight
-
-openai_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+from app.services.llm import openai_client
 
 INSIGHTS_SYSTEM_PROMPT = """You are an educational analyst reviewing a student's oral exam transcript.
 

@@ -1,19 +1,9 @@
 import os
 import uuid
-import boto3
-from openai import AsyncOpenAI
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from app.models.admin import IngestResponse
-
-openai_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-s3 = boto3.client(
-    "s3",
-    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-    region_name=os.getenv("AWS_REGION"),
-)
+from app.services.llm import openai_client
 
 BUCKET = os.getenv("AWS_BUCKET_NAME")
 CHUNK_SIZE = 400
@@ -50,8 +40,15 @@ async def ingest_document(
     document_id = str(uuid.uuid4())
     storage_path = f"courses/{course_id}/{document_id}/{filename}"
 
-    # 1. Upload raw file to object storage
-    s3.put_object(Bucket=BUCKET, Key=storage_path, Body=file_bytes)
+    # 1. Upload raw file to object storage (skipped if AWS not configured)
+    if BUCKET:
+        import boto3
+        s3 = boto3.client("s3",
+            aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+            aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+            region_name=os.getenv("AWS_REGION"),
+        )
+        s3.put_object(Bucket=BUCKET, Key=storage_path, Body=file_bytes)
 
     # 2. Insert document record
     await db.execute(
@@ -79,7 +76,7 @@ async def ingest_document(
         await db.execute(
             text("""
                 INSERT INTO chunks (chunk_id, document_id, course_id, chunk_index, text, embedding)
-                VALUES (:chunk_id, :document_id, :course_id, :chunk_index, :text, :embedding::vector)
+                VALUES (:chunk_id, :document_id, :course_id, :chunk_index, :text, CAST(:embedding AS vector))
             """),
             {
                 "chunk_id": chunk_id,
