@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Upload, FileText, ArrowRight, CheckCircle, Loader2, X,
-  BookOpen, Send,
+  BookOpen, Send, Copy, Check,
 } from "lucide-react";
 import { AgoraLogo } from "@/components/AgoraLogo";
 
@@ -76,6 +76,14 @@ export default function InstructorSetup() {
   const [phase, setPhase] = useState<Phase>("identity");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -657,9 +665,19 @@ export default function InstructorSetup() {
                   <span className="font-medium text-foreground">{courseName}</span> is ready for students.
                 </p>
               </div>
-              <div className="rounded-lg border border-border bg-muted/50 px-4 py-3 text-left space-y-1">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Course ID (share with students)</p>
-                <p className="font-mono text-sm break-all select-all">{courseId}</p>
+              <div className="rounded-lg border border-border bg-muted/50 px-4 py-3 text-left space-y-2">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Course ID — share this with your students</p>
+                <div className="flex items-center gap-2">
+                  <p className="font-mono text-sm break-all select-all flex-1">{courseId}</p>
+                  <button
+                    onClick={() => copyToClipboard(courseId)}
+                    title="Copy course ID"
+                    className="flex-shrink-0 flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border border-border hover:border-primary/50 hover:text-primary transition-colors"
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? "Copied!" : "Copy"}
+                  </button>
+                </div>
               </div>
               <button
                 onClick={goToDashboard}

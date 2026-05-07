@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import {
   Send, Mic, LogOut, Loader2, Volume2,
-  FileText, TrendingUp, TrendingDown, Minus,
+  FileText, TrendingUp, TrendingDown, Minus, GripVertical,
 } from "lucide-react";
 import { AgoraLogo } from "@/components/AgoraLogo";
 import { ChatWindow, type ChatMessage } from "@/components/ChatWindow";
@@ -102,6 +102,52 @@ export default function EnrolledSession() {
   // Right panel — most recent cited chunk
   const [activeChunk, setActiveChunk] = useState<ChunkRef | null>(null);
   const [chunkLoading, setChunkLoading] = useState(false);
+
+  // Resizable panels
+  const [leftWidth, setLeftWidth] = useState(224);   // px — default w-56
+  const [rightWidth, setRightWidth] = useState(256); // px — default w-64
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  function useDragResize(
+    setter: (w: number) => void,
+    side: "left" | "right",
+    min = 140,
+    max = 400,
+  ) {
+    const dragging = useRef(false);
+    const startX = useRef(0);
+    const startW = useRef(0);
+
+    const onMouseDown = (e: React.MouseEvent) => {
+      dragging.current = true;
+      startX.current = e.clientX;
+      startW.current = side === "left" ? leftWidth : rightWidth;
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+
+      const onMove = (ev: MouseEvent) => {
+        if (!dragging.current) return;
+        const delta = side === "left"
+          ? ev.clientX - startX.current
+          : startX.current - ev.clientX;
+        setter(Math.min(max, Math.max(min, startW.current + delta)));
+      };
+      const onUp = () => {
+        dragging.current = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+      };
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
+    };
+
+    return onMouseDown;
+  }
+
+  const onDragLeft = useDragResize(setLeftWidth, "left");
+  const onDragRight = useDragResize(setRightWidth, "right");
 
   const addMessage = (speaker: ChatMessage["speaker"], text: string) =>
     setMessages((prev) => [...prev, { id: crypto.randomUUID(), speaker, text }]);
@@ -303,10 +349,13 @@ export default function EnrolledSession() {
         </div>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div ref={containerRef} className="flex-1 flex overflow-hidden">
 
         {/* ── Left panel: concept mastery ── */}
-        <div className="hidden lg:flex w-56 flex-shrink-0 flex-col border-r border-border bg-card/30 overflow-y-auto">
+        <div
+          className="hidden lg:flex flex-shrink-0 flex-col border-r border-border bg-card/30 overflow-y-auto"
+          style={{ width: leftWidth }}
+        >
           <div className="px-4 py-3 border-b border-border">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Concepts</p>
           </div>
@@ -343,6 +392,14 @@ export default function EnrolledSession() {
               );
             })}
           </ul>
+        </div>
+
+        {/* Left drag handle */}
+        <div
+          onMouseDown={onDragLeft}
+          className="hidden lg:flex w-1 flex-shrink-0 items-center justify-center cursor-col-resize hover:bg-primary/20 active:bg-primary/30 transition-colors group"
+        >
+          <GripVertical className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary/60 pointer-events-none" />
         </div>
 
         {/* ── Middle: chat ── */}
@@ -393,8 +450,19 @@ export default function EnrolledSession() {
           </div>
         </div>
 
+        {/* Right drag handle */}
+        <div
+          onMouseDown={onDragRight}
+          className="hidden xl:flex w-1 flex-shrink-0 items-center justify-center cursor-col-resize hover:bg-primary/20 active:bg-primary/30 transition-colors group"
+        >
+          <GripVertical className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary/60 pointer-events-none" />
+        </div>
+
         {/* ── Right panel: reference material ── */}
-        <div className="hidden xl:flex w-64 flex-shrink-0 flex-col border-l border-border bg-card/30 overflow-y-auto">
+        <div
+          className="hidden xl:flex flex-shrink-0 flex-col border-l border-border bg-card/30 overflow-y-auto"
+          style={{ width: rightWidth }}
+        >
           <div className="px-4 py-3 border-b border-border">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Source material</p>
             <p className="text-xs text-muted-foreground mt-0.5">Updates as agent cites content</p>
